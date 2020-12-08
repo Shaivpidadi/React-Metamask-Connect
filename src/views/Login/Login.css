@@ -1,0 +1,18 @@
+.LoginContainerWrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    min-height: 100vh;
+}
+
+.LoginButtonWrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+.LoginButtonMargin {
+    margin-bottom: 10px;
+    width: 300px;
+}
