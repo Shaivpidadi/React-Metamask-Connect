@@ -10,9 +10,11 @@
 .LoginButtonWrapper {
     display: flex;
     flex-direction: column;
+    width: 380px;
+    margin: auto;
 }
 
 .LoginButtonMargin {
     margin-bottom: 10px;
-    width: 300px;
+    width: auto;
 }

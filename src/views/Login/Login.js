@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { MetaMaskButton, Button } from 'rimble-ui';
+import { MetaMaskButton, Button, Modal, Box, Heading, Card } from 'rimble-ui';
 import MetaMaskOnboarding from '@metamask/onboarding';
 import WalletConnect from "@walletconnect/client";
 import QRCodeModal from "@walletconnect/qrcode-modal";
@@ -17,6 +17,8 @@ const Login = () => {
   const [accounts, setAccounts] = useState([]);
   const [connector, setConnector] = useState({});
   const [walletConnectDetails, setWalletConnectDetails] = useState({});
+  const [isOpen, setIsOpen] = useState(false);
+  const [isLoggedIn, setIsLogedIn] = useState(false);
   const onboarding = useRef();
 
 
@@ -24,8 +26,14 @@ const Login = () => {
     if (!onboarding.current) {
       onboarding.current = new MetaMaskOnboarding();
     }
+
   }, []);
 
+  useEffect(() => {
+    if (isLoggedIn) {
+      setIsOpen(false);
+    }
+  }, [isLoggedIn])
   useEffect(() => {
     if (MetaMaskOnboarding.isMetaMaskInstalled()) {
       if (accounts.length > 0) {
@@ -45,6 +53,7 @@ const Login = () => {
         .request({ method: 'eth_requestAccounts' })
         .then((newAccounts) => {
           console.log({ newAccounts })
+          setIsLogedIn(true);
           setAccounts(newAccounts)
         });
     } else {
@@ -69,6 +78,17 @@ const Login = () => {
       address,
     });
   };
+
+  const closeModal = e => {
+    e.preventDefault();
+    setIsOpen(false);
+  };
+
+  const openModal = e => {
+    e.preventDefault();
+    setIsOpen(true);
+  };
+
 
   const resetApp = async () => {
     setWalletConnectDetails({});
@@ -114,7 +134,7 @@ const Login = () => {
       if (error) {
         throw error;
       }
-
+      setIsLogedIn(true);
       onConnect(payload);
     });
 
@@ -145,14 +165,38 @@ const Login = () => {
   };
 
   return (
-    <div className="LoginContainerWrapper">
-      <div className="LoginButtonWrapper">
-        <MetaMaskButton className="LoginButtonMargin" isDisabled={isDisabled} onClick={() => handleMetamaskClick()}>
-          {buttonText}
-        </MetaMaskButton>
-        <Button className="LoginButtonMargin" onClick={() => walletConnectInit()}> Connect WalletConnect</Button>
+    <>
+      <div className="LoginContainerWrapper">
+        <Button onClick={openModal} disabled={isLoggedIn}> {isLoggedIn ? 'Logged In' : 'Login'} </Button>
       </div>
-    </div>
+
+      <Modal isOpen={isOpen}>
+        <Card width={"420px"} p={0}>
+          <Button.Text
+            icononly
+            icon={"Close"}
+            color={"moon-gray"}
+            position={"absolute"}
+            top={0}
+            right={0}
+            mt={3}
+            mr={3}
+            onClick={closeModal}
+          />
+
+          <Box p={4} mb={3}>
+            <Heading.h3>Connect to a wallet</Heading.h3>
+          </Box>
+
+          <div className="LoginButtonWrapper">
+            <MetaMaskButton className="LoginButtonMargin" isDisabled={isDisabled} onClick={() => handleMetamaskClick()}>
+              {buttonText}
+            </MetaMaskButton>
+            <Button className="LoginButtonMargin" onClick={() => walletConnectInit()}> Connect WalletConnect</Button>
+          </div>
+        </Card>
+      </Modal>
+    </>
   )
 }
 
