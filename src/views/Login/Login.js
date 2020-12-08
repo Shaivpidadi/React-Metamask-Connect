@@ -33,7 +33,8 @@ const Login = () => {
     if (isLoggedIn) {
       setIsOpen(false);
     }
-  }, [isLoggedIn])
+  }, [isLoggedIn]);
+
   useEffect(() => {
     if (MetaMaskOnboarding.isMetaMaskInstalled()) {
       if (accounts.length > 0) {
@@ -47,12 +48,17 @@ const Login = () => {
     }
   }, [accounts]);
 
+  useEffect(() => {
+    if (Object.keys(walletConnectDetails).length === 0) {
+      setIsLogedIn(false);
+    }
+  }, [walletConnectDetails])
+
   const handleMetamaskClick = () => {
     if (MetaMaskOnboarding.isMetaMaskInstalled()) {
       window.ethereum
         .request({ method: 'eth_requestAccounts' })
         .then((newAccounts) => {
-          console.log({ newAccounts })
           setIsLogedIn(true);
           setAccounts(newAccounts)
         });
@@ -90,7 +96,7 @@ const Login = () => {
   };
 
 
-  const resetApp = async () => {
+  const resetApp = () => {
     setWalletConnectDetails({});
   };
 
