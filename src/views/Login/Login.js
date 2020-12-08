@@ -13,7 +13,7 @@ const Login = () => {
       updateIsMetamaskInstalled(true);
     else
       updateIsMetamaskInstalled(false);
-  });
+  }, []);
 
   return (
     <div className="LoginContainerWrapper">
