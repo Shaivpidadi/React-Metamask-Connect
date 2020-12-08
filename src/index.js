@@ -11,10 +11,8 @@ import rootReducer from './store/reducer';
 import rootSaga from './store/sagas';
 
 const composeEnhancers =
-  process.env.NODE_ENV === 'development'
-    ? // eslint-disable-next-line no-underscore-dangle
-    window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
-    : null || compose;
+  (process.env.NODE_ENV === 'development' ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : null) || compose;
+
 
 const sagaMiddleware = createSagaMiddleware();
 
