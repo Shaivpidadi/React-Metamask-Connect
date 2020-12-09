@@ -3,6 +3,7 @@ import { MetaMaskButton, Button, Modal, Box, Heading, Card } from 'rimble-ui';
 import MetaMaskOnboarding from '@metamask/onboarding';
 import WalletConnect from "@walletconnect/client";
 import QRCodeModal from "@walletconnect/qrcode-modal";
+import Web3 from 'web3';
 
 import './Login.css';
 import DiscordChat from '../../components/DiscordChat/DiscordChat';
@@ -22,8 +23,21 @@ const Login = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoggedIn, setIsLogedIn] = useState(false);
   const [isIframeLoading, setIsIframeLoading] = useState(true);
+  const [userBalance, setUserBalance] = useState();
   const onboarding = useRef();
 
+  useEffect(() => async () => {
+    if (window.ethereum) {
+      window.web3 = new Web3(window.ethereum)
+      await window.ethereum.enable()
+    }
+    else if (window.web3) {
+      window.web3 = new Web3(window.web3.currentProvider)
+    }
+    else {
+      console.log('Non-Ethereum browser detected. You should consider trying MetaMask!')
+    }
+  }, [])
 
   useEffect(() => {
     if (!onboarding.current) {
@@ -63,7 +77,11 @@ const Login = () => {
         .request({ method: 'eth_requestAccounts' })
         .then((newAccounts) => {
           setIsLogedIn(true);
-          setAccounts(newAccounts)
+          setAccounts(newAccounts);
+          window.web3.eth.getBalance(newAccounts[0])
+            .then((balance) => {
+              setUserBalance(balance / 1000000000000000000);
+            });
         });
     } else {
       onboarding.current.startOnboarding();
@@ -79,13 +97,15 @@ const Login = () => {
   const onConnect = async (payload) => {
     const { chainId, accounts } = payload.params[0];
     const address = accounts[0];
+    const getBalance = await window.web3.eth.getBalance(address);
     setWalletConnectDetails({
       ...walletConnectDetails,
       connected: true,
       chainId,
       accounts,
-      address,
+      address
     });
+    setUserBalance(getBalance);
   };
 
   const closeModal = e => {
@@ -175,6 +195,9 @@ const Login = () => {
 
   return (
     <>
+      <div>
+        {!!userBalance && isLoggedIn && (<h3> Balance: {userBalance} </h3>)}
+      </div>
       <div className="LoginContainerWrapper">
         <Button onClick={openModal} disabled={isLoggedIn}> {isLoggedIn ? 'Logged In' : 'Login'} </Button>
         <DiscordChat isIframeLoadingCompleted={() => setIsIframeLoading(false)} />
