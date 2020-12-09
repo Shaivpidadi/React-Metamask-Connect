@@ -20,6 +20,7 @@ const Login = () => {
   const [walletConnectDetails, setWalletConnectDetails] = useState({});
   const [isOpen, setIsOpen] = useState(false);
   const [isLoggedIn, setIsLogedIn] = useState(false);
+  const [isIframeLoading, setIsIframeLoading] = useState(true);
   const onboarding = useRef();
 
 
@@ -175,7 +176,7 @@ const Login = () => {
     <>
       <div className="LoginContainerWrapper">
         <Button onClick={openModal} disabled={isLoggedIn}> {isLoggedIn ? 'Logged In' : 'Login'} </Button>
-        <DiscordChat />
+        {!isIframeLoading && (<DiscordChat isIframeLoadingCompleted={() => setIsIframeLoading(false)} />)}
       </div>
 
 
