@@ -1,1 +1,1 @@
-# React Metamas Trust Wallet connect
+# React Metamask Trust Wallet connect
