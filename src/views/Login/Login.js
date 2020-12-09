@@ -5,6 +5,8 @@ import WalletConnect from "@walletconnect/client";
 import QRCodeModal from "@walletconnect/qrcode-modal";
 
 import './Login.css';
+import DiscordChat from '../../components/DiscordChat/DiscordChat';
+import Loader from '../../components/Loader/Loader';
 
 const ONBOARD_TEXT = 'Click to install MetaMask!';
 const CONNECT_TEXT = 'Connect';
@@ -19,6 +21,7 @@ const Login = () => {
   const [walletConnectDetails, setWalletConnectDetails] = useState({});
   const [isOpen, setIsOpen] = useState(false);
   const [isLoggedIn, setIsLogedIn] = useState(false);
+  const [isIframeLoading, setIsIframeLoading] = useState(true);
   const onboarding = useRef();
 
 
@@ -174,7 +177,9 @@ const Login = () => {
     <>
       <div className="LoginContainerWrapper">
         <Button onClick={openModal} disabled={isLoggedIn}> {isLoggedIn ? 'Logged In' : 'Login'} </Button>
+        <DiscordChat isIframeLoadingCompleted={() => setIsIframeLoading(false)} />
       </div>
+
 
       <Modal isOpen={isOpen}>
         <Card width={"420px"} p={0}>
